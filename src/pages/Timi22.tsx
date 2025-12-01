@@ -54,6 +54,7 @@ const FetchAefing = () => {
             ))}
           </div>
         )}
+        {error && <div>{error} </div>}
       </div>
       <div
         style={{
@@ -79,12 +80,85 @@ const FetchAefing = () => {
   );
 };
 
+function AutoSaveNote() {
+  const [note, setNote] = useState("");
+  const [status, setStatus] = useState("Nothing to save");
+
+  useEffect(() => {
+    if (!note.trim()) {
+      setStatus("Write something...");
+      return;
+    }
+    setStatus("Saving...");
+
+    const id = setTimeout(() => {
+      //þykjumst að vera að save-a note í database
+      setStatus("Saved!");
+    }, 1000);
+    return () => clearTimeout(id);
+  }, [note]);
+  return (
+    <div>
+      <h1>Note</h1>
+      <textarea
+        rows={5}
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+      />
+      <p>{status}</p>
+    </div>
+  );
+}
+
+function BMITracker() {
+  const [weight, setWeight] = useState(70);
+  const [height, setHeight] = useState(170);
+  const [bmi, setBmi] = useState<number | null>(null);
+
+  useEffect(() => {
+    const meters = height / 100;
+    const results = weight / (meters * meters);
+    setBmi(Number(results.toFixed(1)));
+  }, [weight, height]);
+  return (
+    <div>
+      <h1>Bmi Tracker</h1>
+      <div>
+        <p>Þyngd í kg:</p>
+        <input
+          type="number"
+          value={weight}
+          onChange={(e) => setWeight(Number(e.target.value))}
+        ></input>
+      </div>
+      <div>
+        <p>Hæð:</p>
+        <input
+          type="number"
+          value={height}
+          onChange={(e) => setHeight(Number(e.target.value))}
+        />
+      </div>
+      <div>
+        <h3>BMI:</h3>
+        <h2>{bmi}</h2>
+      </div>
+    </div>
+  );
+}
+
 export default function Timi22() {
   return (
     <div>
       <h1>Timi 22</h1>
       <div>
         <FetchAefing />
+      </div>
+      <div>
+        <AutoSaveNote />
+      </div>
+      <div>
+        <BMITracker />
       </div>
     </div>
   );
